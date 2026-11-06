@@ -2,16 +2,20 @@
 
 个人 Agent 开发知识库，用来把每天学到的概念、项目实现和面试表达整理成循序渐进、可复习、能用自己的话讲清的笔记。
 
+## 在线阅读
+
+点击标题即可在 GitHub 网页中直接阅读 Markdown 笔记，无需下载：
+
+- [今日学习｜2026-11-06 Agent 技术栈串讲](content/每日学习/2026-11-06-Agent技术栈串讲.md)
+- [专题笔记｜Agent 开发核心链路：ReAct、MCP、RAG、记忆与 Web API](content/知识专题/Agent开发核心链路-检索记忆工具与WebAPI.md)
+
+> 当前使用 GitHub 自带的 Markdown 阅读页面，尚未配置独立的 GitHub Pages 站点。
+
 ## 当前学习主线
 
 1. [Enterprise Insight Agent](https://github.com/12hsj12/Enterprise-Insight-Agent)
 2. [多 Agent 智能客服（EchoMind）](https://github.com/12hsj12/multi-agent-customer-support-logistics)
 3. 第三个项目启动后再加入，不预设技术方案。
-
-## 最近更新
-
-- [2026-11-06｜Agent 技术栈串讲](content/每日学习/2026-11-06-Agent技术栈串讲.md)
-- [Agent 开发核心链路：ReAct、MCP、RAG、记忆与 Web API](content/知识专题/Agent开发核心链路-检索记忆工具与WebAPI.md)
 
 ## 每日协作方式
 
