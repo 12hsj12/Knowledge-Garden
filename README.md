@@ -1,44 +1,32 @@
 # Knowledge Garden
 
-个人 Agent 开发知识库，用来把每天学到的概念、项目实现和面试表达整理成循序渐进、可复习、能用自己的话讲清的笔记。
+个人 Agent 开发知识库。知识按主题和概念层级组织，通过项目代码、系统链路和面试追问把概念讲透。
 
 ## 在线阅读
 
-点击标题即可在 GitHub 网页中直接阅读 Markdown 笔记，无需下载：
+文档站使用 MkDocs Material，包含左侧章节导航、页内目录和全文搜索。GitHub Pages 发布地址：
 
-- [今日学习｜2026-11-06 Agent 技术栈串讲](content/每日学习/2026-11-06-Agent技术栈串讲.md)
-- [专题笔记｜Agent 开发核心链路：ReAct、MCP、RAG、记忆与 Web API](content/知识专题/Agent开发核心链路-检索记忆工具与WebAPI.md)
+[打开 Knowledge Garden 文档站](https://12hsj12.github.io/Knowledge-Garden/)
 
-> 当前使用 GitHub 自带的 Markdown 阅读页面，尚未配置独立的 GitHub Pages 站点。
+首次发布前，需要在仓库 Settings → Pages 将 Build and deployment 的 Source 设为 **GitHub Actions**。之后每次更新 docs/ 下的内容，GitHub Actions 会构建并发布站点。
 
-## 当前学习主线
+## 知识结构
+
+- **Agent**：系统主线、ReAct 与工具调用、RAG、MCP、记忆系统、服务接口。
+- **项目实践**：Enterprise Insight Agent 与 EchoMind 的架构、代码落点和面试表达。
+
+每个技术主题依次说明概念原理、两个项目中的真实实现、模块如何协作，以及面试追问与回答。笔记是整理后的知识正文，不按日期生成学习日志。
+
+## 项目主线
 
 1. [Enterprise Insight Agent](https://github.com/12hsj12/Enterprise-Insight-Agent)
 2. [多 Agent 智能客服（EchoMind）](https://github.com/12hsj12/multi-agent-customer-support-logistics)
 3. 第三个项目启动后再加入，不预设技术方案。
 
-## 每日协作方式
+## 本地文档源
 
-每天直接发送当天学到的内容、问题、代码片段或语音转写，不必先整理格式。整理时先从自己的理解出发，必要时补问关键环节，并核对项目实现和资料。
-
-每篇重要笔记按以下层次展开：
-
-- 解决什么问题
-- 核心概念与心智模型
-- 一次请求的执行过程
-- 项目中的实现依据
-- 设计取舍、适用边界和常见误解
-- 用自己的话复述
-- 面试回答与主动回忆题
-
-每日记录保留学习过程；成熟、可复用的概念归入专题页，项目事实归入项目页，并通过链接互相关联。写入仓库前区分已核实事实、推断和待验证内容，不凭空补充简历指标或实现细节。
-
-## 内容目录规划
-
-- **学习路线**：按基础、Agent Loop、工具、多 Agent、RAG 与记忆、工程化、评测逐步推进。
-- **知识专题**：沉淀跨项目可复用的 Agent 开发概念。
-- **项目学习**：整理架构、请求链路、代码落点、验证依据和设计取舍。
-- **每日学习**：记录当天学习、疑问和待验证事项。
-- **面试输出**：整理项目介绍、技术回答、自测题和复习记录。
+- [docs/](docs/)：文档站内容。
+- [mkdocs.yml](mkdocs.yml)：站点主题与左侧导航树。
+- [.github/workflows/deploy-docs.yml](.github/workflows/deploy-docs.yml)：自动构建与发布流程。
 
 本仓库为公开仓库，只记录适合公开分享的内容。
