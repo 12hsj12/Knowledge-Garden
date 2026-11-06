@@ -8,6 +8,11 @@
 2. [多 Agent 智能客服（EchoMind）](https://github.com/12hsj12/multi-agent-customer-support-logistics)
 3. 第三个项目启动后再加入，不预设技术方案。
 
+## 最近更新
+
+- [2026-11-06｜Agent 技术栈串讲](content/每日学习/2026-11-06-Agent技术栈串讲.md)
+- [Agent 开发核心链路：ReAct、MCP、RAG、记忆与 Web API](content/知识专题/Agent开发核心链路-检索记忆工具与WebAPI.md)
+
 ## 每日协作方式
 
 每天直接发送当天学到的内容、问题、代码片段或语音转写，不必先整理格式。整理时先从自己的理解出发，必要时补问关键环节，并核对项目实现和资料。
