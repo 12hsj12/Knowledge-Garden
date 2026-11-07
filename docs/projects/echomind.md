@@ -20,7 +20,7 @@ EchoMind 是面向电商售后场景的多 Agent 智能客服系统。FastAPI �
 
 - api/main.py
 - agents/agent_orchestrator.py
-- agents/intent_recognizer.py
+- core/intent_recognizer.py
 - agents/tools.py
 - mcp/tool_manager.py
 - mcp/knowledge_base.py
@@ -32,7 +32,7 @@ EchoMind 是面向电商售后场景的多 Agent 智能客服系统。FastAPI �
 
 ### 3.1 三类基线信号
 
-IntentRecognizer 综合三路信号：LLM 分类理解上下文，Embedding 匹配相似意图表达，Pattern 识别明确关键词、格式与规则特征。开启 Embedding 时融合权重为 0.7、0.2、0.1；LLM 和 Embedding 可并发执行。LLM 失败时系统按可用 Embedding 或 Pattern 信号降级。
+IntentRecognizer 综合三路信号：LLM 分类理解上下文，Embedding 匹配相似意图表达，Pattern 识别明确关键词、格式与规则特征。开启 Embedding 时融合权重为 0.7、0.2、0.1；LLM 和 Embedding 可并发执行。意图识别的 Embedding 优先使用配置的远端向量接口；远端接口不可用时使用 256 维字符 n-gram 哈希向量作为本地近似匹配。它与 ChromaDB 知识库的文档 Embedding 是两条不同链路。LLM 失败时系统按可用 Embedding 或 Pattern 信号降级。
 
 ### 3.2 OpenJev 的位置
 
@@ -107,7 +107,7 @@ mcp/tool_manager.py 中的 MCPToolManager 是自定义工具管理层，负责�
 
 ### 7.2 Prometheus 指标
 
-FastAPI 的 /metrics 暴露 Prometheus 格式指标。当前监控组件定义 Agent 成功率、Agent 延迟、工具成功率和请求计数相关指标；监控模块定期收集成功率与平均耗时等统计，并维护异常阈值和告警建议。Prometheus 以 10 秒间隔抓取 echomind:8000/metrics，适合观察服务指标随时间的变化。
+FastAPI 的 /metrics 暴露 Prometheus 格式指标。当前监控组件定义 Agent 成功率 Gauge、Agent 延迟 Histogram、工具成功率 Gauge，以及 requests_total Counter。PerformanceMonitor 定期更新成功率类 Gauge 和平均耗时 Histogram；requests_total 当前已注册，但采集循环没有请求递增埋点。agent_latency_ms 记录的是采集周期读取到的平均延迟，不是逐请求原始耗时分布。Prometheus 以 10 秒间隔抓取 echomind:8000/metrics，适合观察已更新指标随时间的变化。
 
 Trace 用来追踪单次请求的详细路径；Prometheus 用聚合时间序列回答整体成功率、延迟和趋势问题。项目部署中的 scrape 配置和指标类型见[Prometheus 指标监控](../agent/prometheus.md)。
 
