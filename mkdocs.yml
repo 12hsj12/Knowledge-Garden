@@ -37,10 +37,16 @@ nav:
   - Agent:
       - Agent 系统主线: agent/index.md
       - ReAct 与工具调用: agent/react.md
+      - 意图识别与 Agent 路由: agent/intent-routing.md
       - RAG 与语义检索: agent/rag.md
       - MCP 工具协议: agent/mcp.md
       - 记忆系统：Redis 与 ChromaDB: agent/memory.md
       - 服务接口：FastAPI、Pydantic 与 REST: agent/web-api.md
+      - Agent 系统评测: agent/evaluation.md
+      - Trace、Span 与 Agent 轨迹: agent/trace-observability.md
+      - LangChain 与 LangGraph: agent/langchain-langgraph.md
+      - Prometheus 指标监控: agent/prometheus.md
+      - Docker 容器化部署: agent/docker.md
   - 项目实践:
       - Enterprise Insight Agent: projects/enterprise-insight-agent.md
       - EchoMind: projects/echomind.md
