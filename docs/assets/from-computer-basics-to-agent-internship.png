@@ -1,0 +1,54 @@
+site_name: Knowledge Garden
+site_description: Agent 开发知识库：概念、项目实现与面试表达
+site_url: https://12hsj12.github.io/Knowledge-Garden/
+repo_url: https://github.com/12hsj12/Knowledge-Garden
+repo_name: 12hsj12/Knowledge-Garden
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - 知识花园: index.md
+  - Agent:
+      - Agent 系统主线: agent/index.md
+      - ReAct 与工具调用: agent/react.md
+      - 意图识别与 Agent 路由: agent/intent-routing.md
+      - RAG 与语义检索: agent/rag.md
+      - MCP 工具协议: agent/mcp.md
+      - 记忆系统：Redis 与 ChromaDB: agent/memory.md
+      - 服务接口：FastAPI、Pydantic 与 REST: agent/web-api.md
+      - Agent 系统评测: agent/evaluation.md
+      - Trace、Span 与 Agent 轨迹: agent/trace-observability.md
+      - LangChain 与 LangGraph: agent/langchain-langgraph.md
+      - Prometheus 指标监控: agent/prometheus.md
+      - Docker 容器化部署: agent/docker.md
+  - 学习路线规划:
+      - 从计算机基础到 Agent 实习: learning-roadmap/index.md
+  - 项目实践:
+      - Enterprise Insight Agent: projects/enterprise-insight-agent.md
+      - EchoMind: projects/echomind.md
