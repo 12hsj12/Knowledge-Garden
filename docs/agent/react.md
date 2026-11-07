@@ -1,66 +1,82 @@
 # ReAct 与工具调用
 
-## 核心概念
+## 1. 核心概念
 
-ReAct 是 Reasoning 与 Acting 的组合思路。模型针对目标判断下一步，必要时执行外部动作，再根据动作返回的 Observation 更新判断。它让语言模型能够把“回答问题”和“执行可验证的操作”放进同一条循环里。
+ReAct（Reasoning and Acting）描述模型围绕目标进行判断、调用外部能力、读取执行结果并继续决策的循环：
 
-常见循环是：
+**目标与上下文 → 决定下一步 → Action → Observation → 再次决策 → 完成或继续**
 
-**目标与上下文 → 判断下一步 → Action → Observation → 再次判断 → 完成或继续**
+模型可以选择直接回答，也可以提出结构化工具调用。应用执行工具后，将真实返回值作为 Observation 放回后续上下文。循环需要明确停止条件，例如给出最终答案、达到调用轮数上限或处理不可恢复的错误。
 
-Action 可以是查订单、查询知识库、调用计算器或请求外部服务。Observation 是工具实际返回的数据、空结果或错误。循环需要有停止条件，例如模型给出最终答案、达到最大调用次数或发生不可恢复的失败。
+ReAct 是 Agent 执行范式，不是特定 Python 框架。项目可以通过模型 SDK 自己实现，也可以用 LangChain 或 LangGraph 等框架组织。
 
-ReAct 是 Agent 执行范式，不是某一个 Python 框架。项目可以用 LangChain、LangGraph 等工具实现，也可以直接使用模型 API 编写自己的循环。
+## 2. 两个项目里的 Agent 执行
 
-## 项目中的实现
-
-### EchoMind
+### 2.1 EchoMind
 
 EchoMind 在 AgentOrchestrator 中直接维护工具调用循环：
 
-1. 把 system prompt、会话上下文、用户消息和 Agent 可用工具 schema 发给 Anthropic Messages API。
-2. 如果模型返回文本，当前 Agent 完成本轮处理。
-3. 如果返回 tool_use，系统确认工具属于该 Agent 白名单，并校验必填参数和类型。
-4. 执行工具 handler，把结果或错误组织成 tool_result，加入消息历史。
-5. 再次请求模型，让它基于工具结果继续处理；单个 Agent 的工具循环最多 3 轮。
-6. 记录工具名称、输入、成功状态、耗时和错误等 Trace。
+1. 将系统说明、会话上下文、当前消息和工具 schema 发送给 Anthropic Messages API。
+2. 模型返回文本时，Agent 可以结束本轮；返回 tool_use 时，应用读取工具名称与参数。
+3. 代码检查当前 Agent 的工具白名单、必填参数和参数类型。
+4. 执行对应 handler，将结果或错误封装为 tool_result。
+5. 把工具结果加入消息历史，再次请求模型；单个 Agent 的工具循环最多 3 轮。
+6. 记录工具调用名称、部分输入、成功状态、耗时、缓存/重排状态和错误等运行信息。
 
-因此项目里的循环不是抽象地“模型在思考”，而是可以在代码里指出模型请求、结构化工具调用、白名单校验、handler 执行、结果回传和下一轮模型请求。
+因此项目中的 ReAct 落在可定位的模型请求、结构化 tool_use、应用校验、handler 执行、tool_result 回传和循环停止逻辑里。
 
-### Enterprise Insight Agent
+### 2.2 Enterprise Insight Agent
 
-Enterprise Insight Agent 的主路径是研究工作流：围绕研究目标组织网页检索、页面内容获取、证据筛选、报告生成和证据治理。这个流程具有 Agentic 的规划与行动特点，但当前工作流不应被简化成 EchoMind 的单工具调用循环。若使用配置的 MCPRetriever，工具选择与工具研究执行是另一个可选路径。
+项目一以 IntelligenceWorkflow 编排企业研究：分析任务、网页搜索、页面获取、证据筛选、报告生成和证据审查。它具有 Agentic 的分步行动特征，面试中应按这条研究工作流说明，不要把它缩成 EchoMind 式的单一工具循环。
 
-## Thought、Action、Observation 如何协作
+Enterprise 的证据策略与报告检查见[项目实践：Enterprise Insight Agent](../projects/enterprise-insight-agent.md)。
 
-- **Thought / 判断**：模型选择直接回答、调用哪个工具，或基于结果再行动。应用侧通常只需要观察结构化动作和结果，不要求记录模型完整的内部推理。
-- **Action / 行动**：模型输出结构化工具名称与参数，应用执行受控 handler。
-- **Observation / 观察**：工具结果或失败信息返回给模型，作为下一轮输入。
+## 3. Thought、Action、Observation 如何协作
 
-外部数据能为回答增加依据，Action 和 Observation 也让运行过程可审查。它们只能降低无依据作答的概率，不能保证消除幻觉：检索内容可能不相关，工具数据可能过时，模型也可能误读结果。
+- **Thought / 判断**：模型根据任务、上下文和工具描述决定下一步。工程系统关注可执行决策及其依据；不要求把模型完整内部推理写入日志。
+- **Action / 行动**：模型提出结构化工具名和参数；应用在授权范围内执行对应操作。
+- **Observation / 观察**：工具的实际数据、空结果或错误返回模型，帮助其决定接下来怎么做。
 
-可靠的实现还需要工具白名单、参数校验、超时和错误处理、来源检查、输出约束、Trace 和评测。模型的推理过程不能代替这些工程控制。
+外部信息可以为回答提供依据，结构化行动也让执行步骤能够检查。它们能降低只靠参数知识生成的无依据回答，但不能保证消除幻觉：检索可能不相关，外部数据可能过期，模型也可能误解工具结果。可靠性还来自来源检查、权限控制、输入校验、超时和错误处理、Trace 与评测。
 
-## 与其他 Agent 组件的协作
+## 4. Observation 与 Trace 的区别
 
-ReAct 回答“模型如何循环行动”。工具注册表描述可调用的能力；MCP 在需要跨应用复用服务时提供标准接入方式；RAG 工具则把检索结果作为一种 Observation 带回模型。Redis 和数据库为工具提供状态或业务数据，但它们不是 ReAct 的组成定义。
+Observation 是 Agent 决策循环中的一个运行时输入：工具执行后，结果返回给模型，影响下一步行动或最终回答。
 
-EchoMind 一次知识问答可以这样串起来：Agent 收到知识库工具 schema → 模型决定调用 → RAG 在 ChromaDB 中检索 → 检索片段作为工具结果返回 → 模型依据片段组织回答 → Trace 记录调用路径。
+Trace 是事后观察整次请求的记录。它把一次请求中的多个阶段和工具调用关联起来，帮助开发者回答“这轮实际发生了什么、在哪里慢或失败”。Trace 可以记录 Observation 的摘要、工具名、成功状态和耗时；但它服务于诊断，不自动成为模型下一步的输入。
 
-## 面试追问与回答
+可以这样记：
+
+- Observation 面向“模型接下来要依据什么行动”。
+- Trace 面向“工程师之后如何复盘这次执行”。
+- Observation 是决策闭环里的数据；Trace 是贯穿执行过程的观测记录。
+
+EchoMind 工具轨迹与项目一 ResearchTrace 的内容见[Trace、Span 与 Agent 轨迹](trace-observability.md)。
+
+## 5. 与 RAG、MCP、记忆的协作
+
+- **RAG**把检索片段作为工具结果或上下文提供给模型。
+- **MCP**标准化客户端如何发现并调用外部工具服务。
+- **记忆**提供近期对话、摘要和用户画像，让模型理解当前会话背景。
+- **ReAct**决定何时使用这些能力，并根据结果继续行动。
+- **Trace**记录系统实际执行的步骤，**评测**检查输出质量与全流程行为。
+
+EchoMind 的知识问答可串成：模型收到知识库工具 schema → 决定调用 → ChromaDB 多查询召回和重排 → 工具结果作为 Observation 返回 → 模型整理答复 → Trace 留下执行轨迹。相关页面：[RAG 与语义检索](rag.md)、[MCP 工具协议](mcp.md)、[记忆系统](memory.md)、[Agent 系统评测](evaluation.md)。
+
+## 6. 面试追问与回答
 
 ### ReAct 和普通 LLM 调用有什么区别？
 
-普通调用通常是输入上下文、输出一次答案。ReAct 允许模型通过结构化动作访问外部能力，并把执行结果放回上下文进行后续判断。关键差异在于有“工具行动—结果观察—继续决策”的闭环。
+> 普通调用通常是输入上下文后返回一段回答；ReAct 把模型决策、工具行动、执行结果观察和后续判断连成循环。项目里能明确指出模型提出工具调用、应用校验并执行、结果如何返回以及循环何时结束。
 
 ### Thought、Action、Observation 会不会消除幻觉？
 
-不会。工具结果提供外部依据，结构化调用限制动作范围，但检索错误、数据过期和模型误读仍会造成错误。还要用证据校验、拒答策略、日志和评测管理风险。
+> 它们提供结构化的外部行动和真实工具结果，让部分回答有可检查依据；系统仍需验证检索来源、工具结果和最终主张。检索错误、过期数据和模型误读仍可能造成错误，因此还要结合证据检查和评测。
 
-### EchoMind 的 ReAct 在哪段代码里？
+### EchoMind 的 ReAct 在哪里？
 
-在 AgentOrchestrator 的模型调用中：请求携带工具 schema，识别 tool_use 后校验白名单和参数、执行 handler、构造 tool_result 并再次请求模型；循环上限为 3 轮。工具输入、执行状态和耗时进入 Trace。
+> AgentOrchestrator 调用 Anthropic API 并提供工具 schema。模型返回 tool_use 后，程序校验白名单与参数、运行 handler、返回 tool_result 并继续请求模型，最多循环 3 轮。Trace 记录工具调用和执行结果。
 
 ### 项目使用了哪个 Agent 框架？
 
-EchoMind 的服务用 FastAPI，但 Agent 编排主链是项目自己的 AgentOrchestrator，调用 Anthropic SDK 的 tool_use；不能把 FastAPI 说成 Agent 框架。Enterprise Insight Agent 以 GPT Researcher 的研究能力为基础，再由项目自己的 IntelligenceWorkflow 编排企业研究、证据和报告链路。
+> EchoMind 的 HTTP 服务使用 FastAPI，但 Agent 编排主链由项目自己的 AgentOrchestrator 管理，底层调用 Anthropic SDK 的 tool_use。Enterprise 使用自定义 IntelligenceWorkflow 编排 GPT Researcher 的研究能力。LangChain 和 LangGraph 是我单独整理的 Agent 框架知识，不是这两个项目主链采用的框架。
