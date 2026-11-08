@@ -32,7 +32,23 @@ EchoMind 是面向电商售后场景的多 Agent 智能客服系统。FastAPI �
 
 ### 3.1 三类基线信号
 
-IntentRecognizer 综合三路信号：LLM 分类理解上下文，Embedding 匹配相似意图表达，Pattern 识别明确关键词、格式与规则特征。开启 Embedding 时融合权重为 0.7、0.2、0.1；LLM 和 Embedding 可并发执行。意图识别的 Embedding 优先使用配置的远端向量接口；远端接口不可用时使用 256 维字符 n-gram 哈希向量作为本地近似匹配。它与 ChromaDB 知识库的文档 Embedding 是两条不同链路。LLM 失败时系统按可用 Embedding 或 Pattern 信号降级。
+IntentRecognizer 综合三路信号：LLM 分类理解上下文，Embedding 匹配相似意图表达，Pattern 识别明确关键词、格式与规则特征。开启 Embedding 时融合权重为 0.7、0.2、0.1；LLM 和 Embedding 可并发执行。当前识别器使用 Anthropic SDK 的 AsyncAnthropic client；代码会检查 client 是否提供 embeddings.create 并尝试 voyage-3-lite，标准 client 下使用本地 256 维字符 n-gram 哈希向量。LLM 失败时系统按可用 Embedding 或 Pattern 信号降级。
+
+#### 识别结果缓存
+
+recognize() 开头用消息与最近 history 生成 cache key。命中时直接返回之前保存的完整 IntentResult，跳过 LLM、Embedding、Pattern 和 OpenJev 决策；后续 Agent 路由、RAG、工具执行与回答生成仍会继续。缓存位于 IntentRecognizer 实例的 Python 字典，不是 Redis，也不在多个 worker 间共享。key 由消息前 200 字符和最近 3 条 history 的有限内容生成；没有 TTL。容量达到 1000 条时，按插入顺序删除最早的 500 条；命中不会刷新顺序，所以实际是批量 FIFO 式淘汰。cache_stats 提供本实例的命中、未命中和命中率。
+
+#### 256 维字符 n-gram
+
+本地向量化先从文本中滑动抽取 1、2、3 个连续字符组成的 unigram、bigram 和 trigram；例如“签收争议”会生成“签”“收”“争”“议”，“签收”“收争”“争议”，以及“签收争”“收争议”等片段。重复片段在当前实现中只保留一次。每个片段经 MD5 哈希映射到 256 个桶中的一个，再按哈希符号向桶中加 1 或减 1，最后得到长度固定为 256 的向量。不同片段可能映射到同一桶，形成哈希碰撞；这里的 256 是桶数，不是训练得到的 256 个语义特征。
+
+识别器对用户消息和各意图模板采用同一编码，再以余弦相似度比较，取每个类别最相似的模板分数作为候选。这种轻量方式能匹配相同字词和短字符片段；它不具备神经 Embedding 对同义表达和上下文语义的学习能力。
+
+#### 与远端 Embedding 和 ChromaDB 的区别
+
+意图识别中的远端 Embedding API 用训练好的模型生成稠密语义向量，代码预留的模型名为 voyage-3-lite；本地哈希向量由规则化字符特征直接计算。知识库中的 ChromaDB 则使用默认 all-MiniLM-L6-v2 embedding function（384 维）把文档和 query 编码，并负责文档、向量、metadata 的索引与近邻检索。意图模板的本地 cosine 比较不经过 ChromaDB，知识库检索也不使用 IntentRecognizer 的 256 维哈希向量。
+
+详细原理、三种方式的表格比较和缓存执行顺序见[意图识别与 Agent 路由](../agent/intent-routing.md)。
 
 ### 3.2 OpenJev 的位置
 
