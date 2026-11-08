@@ -179,3 +179,11 @@ OpenJev 通过独立服务接口接入，不承担知识库检索，也不替代
 ### ChromaDB 是不是 Embedding 模型？
 
 > 不是。ChromaDB 是向量存储和检索组件；collection 没有传自定义 embedding_function 时会采用默认 all-MiniLM-L6-v2 编码。EchoMind 的知识库通过 Chroma 写入文档向量并查询相似文档；IntentRecognizer 则另行用本地 256 维哈希向量匹配意图模板。
+
+
+## 8. 参考资料
+
+- [Chroma Embedding functions](https://docs.trychroma.com/docs/embeddings)：Chroma collection 如何使用默认或自定义 Embedding function。
+- [Chroma Python client reference](https://docs.trychroma.com/reference/python)：collection 未传 embedding_function 时使用默认函数。
+- [Voyage Text Embeddings](https://docs.voyageai.com/docs/embeddings)：模型维度与 Embedding API。
+- [Sentence Transformers all-MiniLM-L6-v2 model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2)：384 维向量模型说明。
