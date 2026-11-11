@@ -91,7 +91,77 @@ L1 和 L2 Cache 是硬件自动管理的缓存层级。若请求的数据在 Cac
 
 工厂比喻是让连号工人拿连号货物，管理员可以把相邻货物一起运回；若每个工人都要去不同角落取货，运输次数就会增加。设计数组布局和线程索引时，经常会让相邻线程处理相邻元素。
 
-## 5. 运算强度与 GPU 性能瓶颈
+## 5. GPU 为什么擅长大规模计算：吞吐与延迟隐藏
+
+GPU 的优势不只是“有很多核心”，还在于它围绕大规模并行工作设计了执行方式：把大量线程分给多个 SM；一个 Warp 等待数据或依赖结果时，调度器可以安排其他就绪 Warp 继续执行。GPU 不会让那次慢访存本身变快，而是尽量让其他工作填满等待空档。
+
+### Clock Cycle：时钟周期只是时间刻度
+
+时钟频率表示处理器每秒经历多少个时钟周期。假设某个处理单元以 2 GHz 工作：
+
+~~~text
+每秒 2,000,000,000 个周期
+一个周期时长 = 1 / 2 GHz = 0.5 ns
+~~~
+
+时钟周期不是“每周期完成一条指令”的保证。指令的延迟可能跨越多个周期；流水线也可能在一条指令尚未完全结束时继续接收其他指令。因此要区分：
+
+- **Latency（延迟）**：一条依赖链或一次数据请求从发出到结果可用要等多久。
+- **Throughput（吞吐）**：处理单元在一段时间里能完成多少独立工作。
+
+### 不同存储的延迟数量级
+
+不同 GPU、缓存命中情况、访问模式和时钟频率会改变真实延迟。下表只帮助建立数量级，不是任意 GPU 的固定规格：
+
+| 存储位置 | 参考数量级 | 直观理解 |
+| --- | --- | --- |
+| Register | 最靠近执行单元，访问通常非常快 | 工人手里的工具 |
+| L1 / Shared Memory | NASA HECC 对 A100/H100 的参考约 20–30 cycles | 车间内的工作台或近处资料 |
+| L2 Cache | NASA HECC 对 A100 的参考约 200 cycles | 多个车间共享的资料柜 |
+| Global Memory（未命中缓存时） | NASA HECC 对 A100 给出的参考约 200–1000 cycles；NVIDIA 文档也说明未缓存访问可能需要数百个周期 | 去显存大仓库取货 |
+
+如果仅为换算而假设频率是 2 GHz，那么 20 cycles 约为 10 ns，500 cycles 约为 250 ns。实际 GPU 频率会动态变化，数据请求也可能命中 L1/L2，因此不能把这些换算当成固定实测，更不能直接据此推算整个程序会慢多少倍。
+
+单次访存延迟高，不等于显存吞吐低。GPU 的显存可以提供很高的总带宽；当许多访问能够并行发出、地址访问有效时，GPU 可以在较长的单次延迟期间持续搬运大量数据。**延迟描述一次请求要等多久，带宽描述单位时间能搬多少数据。**
+
+### GPU 为什么适合大量并行工作
+
+GPU 上有许多 SM，每个 SM 可以安排多个 Warp。若一个 Warp 因为 Global Memory 访问而等待，SM 的调度器可以选择另一个当前已准备好执行的 Warp。这个过程叫延迟隐藏。
+
+工厂比喻里，GPU 是一座有很多车间和工作队的工厂：一队人去仓库取料时，调度员可以先让另一队继续加工。仓库里的这一趟并没有变快，但工厂整体不必完全停工。
+
+这使 GPU 擅长**可拆成大量相对独立、结构规律的工作**，例如大批量向量计算、矩阵运算和神经网络张量计算。CPU 通常更适合控制流程复杂、分支不规则或可并行部分很少的工作。比较时要看工作负载：GPU 强项通常是更高的总体吞吐，不代表每个单独任务的响应延迟都比 CPU 低。
+
+延迟隐藏也不是自动成功：SM 需要有足够多的就绪 Warp；若所有 Warp 都在等待同一数据，或任务依赖没有可重叠的工作，计算单元仍会空等。这与 Occupancy 有关系，但 Occupancy 只是驻留 Warp 数的比例，不能直接说明 Warp 此刻是否就绪或在做有效工作。
+
+### Shared Memory 如何加速：把重复用的数据留在车间
+
+Shared Memory 位于 SM 片上，由程序显式安排，能让同一个 Block 的线程协作使用一份数据。适合它的关键条件是：**一次搬入的数据会在之后被多次复用**。
+
+矩阵乘法是典型例子。一个 Block 负责计算输出矩阵的一块 Tile：
+
+1. Block 中的线程按协作方式，从 Global Memory 合并读取输入矩阵中需要的 Tile。
+2. 把 Tile 放入 Shared Memory；需要跨线程读取时，在正确位置执行 Block 同步。
+3. 多个线程从 Shared Memory 反复读取这批数据，完成多次乘加。
+4. 得到输出 Tile 后再写回 Global Memory。
+
+如果没有这次显式复用，多个线程可能反复请求相同的矩阵元素；用 Shared Memory 暂存后，一批数据可以服务更多计算。主要收益是**减少重复的 Global Memory 流量并提高数据复用**，同时片上 Shared Memory 的访问延迟通常低于 Global Memory。
+
+但直接读取 Global Memory 可能命中 L1 或 L2 Cache，所以不能把每一次重复读都当成一次完整的显存往返。Shared Memory 的作用是让开发者明确控制 Block 内的数据放置、复用和访问布局；它不是“只要用就更快”的替代缓存。NVIDIA 的矩阵乘法示例也展示了通过 Tile 将输入数据搬入 Shared Memory 并反复用于计算的优化方式。
+
+### Shared Memory 的收益要扣除使用成本
+
+放入 Shared Memory 之前，线程要先从 Global Memory 加载数据；跨线程依赖时还要同步。Shared Memory 容量有限，用量过大可能减少每个 SM 可同时驻留的 Block；访问还可能遇到 Bank Conflict。若数据只读一次、没有跨线程复用，搬入和同步的成本可能抵消收益。
+
+因此可以按下面的判断来理解：
+
+- **向量加法**：每个输入元素通常只参与一次加法。直接做合并的 Global Memory 读写通常更合适；专门搬进 Shared Memory 往往没有足够复用收益。
+- **矩阵乘法**：输入 Tile 会参与多次乘加，适合放入 Shared Memory 让线程块反复复用。
+- **不规则访问**：如果 Shared Memory 能把读取重排为更合并的 Global Memory 访问，也可能有帮助；仍要结合同步、Bank Conflict 和实际性能测量判断。
+
+所以 Shared Memory 不是越多越好。判断重点是数据能复用多少、减少了多少外部访存，以及搬运、同步和资源占用增加了多少成本。
+
+## 6. 运算强度与 GPU 性能瓶颈
 
 ### Arithmetic Intensity（运算强度）
 
@@ -128,7 +198,7 @@ Roofline 模型用运算强度、内存带宽上限和计算峰值来估计 kern
 
 因此先判断 Memory-Bound 还是 Compute-Bound，再决定优化方向，通常比盲目增加线程或 Shared Memory 更有效。
 
-## 6. Occupancy（占用率）：SM 上有多少 Warp 可驻留
+## 7. Occupancy（占用率）：SM 上有多少 Warp 可驻留
 
 CUDA 中的 Occupancy 通常定义为：一个 SM 上当前驻留的 Active Warps 数量，占该 SM 支持的最大 Active Warps 数量的比例。
 
@@ -159,7 +229,7 @@ Occupancy 受多种资源共同限制：
 
 所以 Occupancy 是诊断和调优的线索，不是最终目标。要结合实际延迟、吞吐、内存带宽利用、计算利用和 Warp stall 等指标判断。可以用 Nsight Compute 的 Occupancy Calculator 与 profiler 辅助查看。
 
-## 7. 一张图景把概念串起来
+## 8. 一张图景把概念串起来
 
 以向量加法为例：
 
@@ -174,7 +244,7 @@ Occupancy 受多种资源共同限制：
 
 这样从“任务如何分配”连接到“数据怎样移动”，再连接到“性能瓶颈与资源占用”。
 
-## 8. 本章记忆卡
+## 9. 本章记忆卡
 
 - GPU 上的执行层级：Kernel → Grid → Block → Thread；Block 由 SM 承载，Thread 以 32 个一组组成 Warp。
 - Block 内线程可以共享 Shared Memory 并同步；不同 Block 不应依赖固定调度顺序。
@@ -194,3 +264,4 @@ Occupancy 受多种资源共同限制：
 - [CUDA Programming Guide：CUDA Kernel、边界检查、Shared Memory 与 Coalescing](https://docs.nvidia.com/cuda/cuda-programming-guide/02-basics/writing-cuda-kernels.html)
 - [CUDA C++ Best Practices Guide：合并访存与 Occupancy](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/)
 - [Nsight Compute Profiling Guide：Roofline 与 Arithmetic Intensity](https://docs.nvidia.com/nsight-compute/ProfilingGuide/)
+- [NASA HECC：A100/H100 GPU 架构与存储延迟参考](https://www.nas.nasa.gov/hecc/support/kb/basics-on-nvidia-gpu-hardware-architecture_704.html)
