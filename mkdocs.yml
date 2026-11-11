@@ -52,6 +52,8 @@ nav:
       - 并发基础:
           - 第 1 章：引入并发: ai-infra/concurrency/chapter-01.md
           - 第 2 章：串行与并行执行: ai-infra/concurrency/chapter-02.md
+      - GPU 基础:
+          - GPU 执行模型、内存与性能: ai-infra/gpu/cuda-execution-memory-performance.md
   - 学习路线规划:
       - 从计算机基础到 Agent 实习: learning-roadmap/index.md
   - 项目实践:
