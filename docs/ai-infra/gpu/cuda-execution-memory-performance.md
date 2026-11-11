@@ -116,7 +116,7 @@ GPU 的优势不只是“有很多核心”，还在于它围绕大规模并行�
 | 存储位置 | 参考数量级 | 直观理解 |
 | --- | --- | --- |
 | Register | 最靠近执行单元，访问通常非常快 | 工人手里的工具 |
-| L1 / Shared Memory | NASA HECC 对 A100/H100 的参考约 20–30 cycles | 车间内的工作台或近处资料 |
+| L1 / Shared Memory | NASA HECC 汇总的片上访问参考值约 20–30 cycles（受架构与测量条件影响） | 车间内的工作台或近处资料 |
 | L2 Cache | NASA HECC 对 A100 的参考约 200 cycles | 多个车间共享的资料柜 |
 | Global Memory（未命中缓存时） | NASA HECC 对 A100 给出的参考约 200–1000 cycles；NVIDIA 文档也说明未缓存访问可能需要数百个周期 | 去显存大仓库取货 |
 
