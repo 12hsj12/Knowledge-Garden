@@ -11,10 +11,18 @@ AI Infra 关注为 AI 工作负载提供和管理运行能力：计算资源如�
 
 ## 当前学习内容
 
-目前从并发编程入门。并发是理解服务如何同时应对多个请求、使用 CPU/GPU 资源、控制延迟和提高吞吐的基础。
+### 并发基础
+
+并发是理解服务如何同时应对多个请求、使用 CPU/GPU 资源、控制延迟和提高吞吐的基础。
 
 - [并发基础：第 1 章 引入并发](concurrency/chapter-01.md)：并发为何重要，性能如何衡量，系统如何扩展，并发可以出现在哪些层次。
 - [并发基础：第 2 章 串行与并行执行](concurrency/chapter-02.md)：串行、顺序、并行、任务独立性、硬件支持、Amdahl 定律、Gustafson 定律。
+
+### GPU 基础
+
+从 GPU 的执行层级、存储层级和性能约束入门，理解计算任务怎样映射到硬件，数据搬运怎样影响性能。
+
+- [GPU 执行模型、内存层级与性能分析](gpu/cuda-execution-memory-performance.md)：CUDA 的 Grid/Block/Thread/Warp/SM、寄存器与显存、合并访存、运算强度和 Occupancy。
 
 ## 建立 Infra 视角
 
