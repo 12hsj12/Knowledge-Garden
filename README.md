@@ -1,6 +1,6 @@
 # Knowledge Garden
 
-个人 Agent 开发知识库。知识按主题和概念层级组织，通过项目代码、系统链路和面试追问把概念讲透。
+个人 AI 技术知识库，分别整理 Agent 应用开发与 AI Infra 基础。内容按主题和概念层级组织，通过系统链路、代码实现和实际场景把知识讲清楚。
 
 ## 在线阅读
 
@@ -8,14 +8,16 @@
 
 [打开 Knowledge Garden 文档站](https://12hsj12.github.io/Knowledge-Garden/)
 
-首次发布前，需要在仓库 Settings → Pages 将 Build and deployment 的 Source 设为 **GitHub Actions**。之后每次更新 docs/ 下的内容，GitHub Actions 会构建并发布站点。
+每次更新 docs/ 下的内容，GitHub Actions 会构建并发布站点。
 
 ## 知识结构
 
-- **Agent**：系统主线、ReAct 与工具调用、RAG、MCP、记忆系统、服务接口。
+- **Agent**：系统主线、ReAct 与工具调用、RAG、MCP、记忆系统、服务接口、评测与可观测性。
+- **AI Infra**：独立整理计算资源、并发执行和后续学习中接触的基础设施主题。
 - **项目实践**：Enterprise Insight Agent 与 EchoMind 的架构、代码落点和面试表达。
+- **学习路线规划**：暂存个人规划材料，作为记录参考。
 
-每个技术主题依次说明概念原理、两个项目中的真实实现、模块如何协作，以及面试追问与回答。笔记是整理后的知识正文，不按日期生成学习日志。
+Agent 主题围绕概念、项目实现和系统协作展开；AI Infra 主题围绕计算、调度、性能和系统扩展等基础问题逐步建立。
 
 ## 项目主线
 
