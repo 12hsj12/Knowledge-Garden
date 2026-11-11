@@ -18,6 +18,7 @@
 - [AI Infra 学习主线](ai-infra/index.md)：从计算资源、任务执行和系统性能等基础概念入门。
 - [并发基础：第 1 章 引入并发](ai-infra/concurrency/chapter-01.md)：并发的价值、延迟与吞吐、系统扩展和并发层次。
 - [并发基础：第 2 章 串行与并行执行](ai-infra/concurrency/chapter-02.md)：任务依赖、并行条件、Amdahl 与 Gustafson 定律。
+- [计算机如何工作：第 3 章](ai-infra/concurrency/chapter-03.md)：处理器、缓存、CPU 执行周期、运行时系统、并行硬件、SMP、Flynn 分类和 CPU/GPU 分工。
 - [GPU 执行模型、内存层级与性能分析](ai-infra/gpu/cuda-execution-memory-performance.md)：从 CUDA 执行层级、访存到 Occupancy 理解 GPU 性能。
 
 ## 阅读方式
