@@ -1,5 +1,5 @@
 site_name: Knowledge Garden
-site_description: Agent 开发知识库：概念、项目实现与面试表达
+site_description: AI 技术知识库：Agent 应用与 AI Infra 基础
 site_url: https://12hsj12.github.io/Knowledge-Garden/
 repo_url: https://github.com/12hsj12/Knowledge-Garden
 repo_name: 12hsj12/Knowledge-Garden
@@ -47,6 +47,11 @@ nav:
       - LangChain 与 LangGraph: agent/langchain-langgraph.md
       - Prometheus 指标监控: agent/prometheus.md
       - Docker 容器化部署: agent/docker.md
+  - AI Infra:
+      - AI Infra 学习主线: ai-infra/index.md
+      - 并发基础:
+          - 第 1 章：引入并发: ai-infra/concurrency/chapter-01.md
+          - 第 2 章：串行与并行执行: ai-infra/concurrency/chapter-02.md
   - 学习路线规划:
       - 从计算机基础到 Agent 实习: learning-roadmap/index.md
   - 项目实践:
