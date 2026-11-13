@@ -1,6 +1,6 @@
 # GPU 执行模型、存储层级与性能分析
 
-这页从 CUDA 编程模型出发，依次看 GPU 如何安排线程、数据经过哪些存储层、一个 kernel 为什么受算力或带宽限制，以及 Occupancy 如何影响延迟隐藏。工厂比喻用于建立直觉，正式概念仍以 CUDA 的执行与资源模型为准。
+这页从 CUDA 编程模型出发，依次看 GPU 如何安排线程、数据经过哪些存储层、一个 kernel 为什么受算力或带宽限制，以及 Occupancy 如何影响延迟隐藏。工厂比喻用于建立直觉，正式概念仍以 CUDA 的执行与资源模型为准。若想先从代码实践理解编译、Kernel 启动和 Host/Device 数据流，可读 [CUDA C/C++ 入门：编译、Kernel 启动与内存管理](cuda-c-cpp-memory-kernel.md)。
 
 ## 1. CUDA 执行层级：Kernel、Grid、Block、Warp 与 SM
 
