@@ -18,6 +18,7 @@ AI Infra 关注为 AI 工作负载提供和管理运行能力：计算资源如�
 - [并发基础：第 1 章 引入并发](concurrency/chapter-01.md)：并发为何重要，性能如何衡量，系统如何扩展，并发可以出现在哪些层次。
 - [并发基础：第 2 章 串行与并行执行](concurrency/chapter-02.md)：串行、顺序、并行、任务独立性、硬件支持、Amdahl 定律、Gustafson 定律。
 - [计算机如何工作：第 3 章](concurrency/chapter-03.md)：处理器、缓存、CPU 执行周期、运行时系统、并行硬件层次、SMP、Flynn 分类与 CPU/GPU 分工。
+- [并发程序的基本构件：第 4 章](concurrency/chapter-04.md)：并发程序设计步骤、进程和线程的内部结构与状态、多进程通信、线程调度，以及 Python 服务中的进程、线程和 asyncio。
 
 ### GPU 基础
 
