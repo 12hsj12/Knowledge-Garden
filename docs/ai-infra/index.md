@@ -24,6 +24,7 @@ AI Infra 关注为 AI 工作负载提供和管理运行能力：计算资源如�
 
 从 GPU 的执行层级、存储层级和性能约束入门，理解计算任务怎样映射到硬件，数据搬运怎样影响性能。
 
+- [CUDA C/C++：编译、Kernel 启动与内存管理](gpu/cuda-c-cpp-memory-kernel.md)：从 C/C++ 指针与编译工具链，串起 Kernel 启动、线程索引、Host/Device 数据流和两种内存管理方式。
 - [GPU 执行模型、内存层级与性能分析](gpu/cuda-execution-memory-performance.md)：CUDA 的 Grid/Block/Thread/Warp/SM、寄存器与显存、合并访存、运算强度和 Occupancy。
 
 ## 建立 Infra 视角
