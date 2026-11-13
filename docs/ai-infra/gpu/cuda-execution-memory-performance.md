@@ -81,6 +81,49 @@ L1 和 L2 Cache 是硬件自动管理的缓存层级。若请求的数据在 Cac
 
 工厂比喻里，Global Memory 是大仓库，L1/L2 是近处的资料柜。资料柜里正好有需要的货时，就不用跑到大仓库；如果没有，就仍要继续向远处取货。
 
+### 张量与显存：张量放在哪里、占多少
+
+深度学习中的数据通常用**张量（Tensor）**表示。它是由同一种数据类型元素组成的多维数组：标量可以看作 0 维张量，向量是 1 维，矩阵是 2 维；模型中还常见以“批次 × 序列长度 × 特征维度”组织的高维张量。PyTorch 张量会带有 shape、dtype 和 device 等属性，分别说明数据形状、元素类型和所在设备。[PyTorch Tensor 文档](https://docs.pytorch.org/docs/stable/tensors.html)
+
+张量所需的基础数据空间可以粗略估算为：
+
+~~~text
+元素个数 × 每个元素占用的字节数
+~~~
+
+例如，形状为 2×3×4 的张量包含 24 个元素。若元素类型是 FP16，每个元素占 2 bytes，张量数据约占 48 bytes。真实运行还会有对齐、临时工作区和框架内存分配等额外开销。
+
+CPU 上创建的张量使用主机内存；放到 CUDA device 上的张量则需要 GPU 显存。一个模型训练过程中，显存通常要容纳模型参数、前向计算产生的激活值、反向计算需要的梯度、优化器状态和临时工作区。尤其是激活值，前向计算生成后往往要留到反向传播阶段，用于计算梯度。模型层数、批次大小和序列长度增加时，需要保存的张量也会增多。
+
+推理一般不需要反向传播的梯度和优化器状态，但仍需要模型参数、计算中的激活值和工作区；自回归大语言模型还会为已经生成的 token 保存 KV Cache。训练和推理面对的显存组成因此有所不同。
+
+### 显存不够时：offload（换出）与重计算
+
+GPU 显存像车间里有限的工作台；CPU 主存像旁边容量更大的存储区。显存紧张时，可以减少同时留在工作台上的数据，常见做法有两种。
+
+#### CPU offload：把张量暂存到主存
+
+**Offload** 是把暂时不用的张量从 GPU 显存移到 CPU 主存，等后续需要时再传回 GPU。训练时可以选择性地卸载激活值或其他状态，腾出显存放入当前要计算的张量。PyTorch 的 checkpoint API 将一类相关策略称为 CPU offload：前向阶段保存到 CPU，反向计算需要时再加载回 GPU。[PyTorch checkpoint 文档](https://docs.pytorch.org/docs/stable/checkpoint.html)
+
+口语里有时会把这种显存换出称为 GPU swap；在深度学习系统中，**offload** 是更明确的术语。它与操作系统把主存页面写到磁盘的 swap 不同：GPU offload 通常是在 GPU 显存和 CPU 主存之间有计划地搬运张量；OS swap 则把内存页换到磁盘，等待时间要长得多。
+
+Offload 用数据传输换显存空间。数据需要经过 CPU 与 GPU 间的互连传输，具体链路可能是 PCIe、NVLink 或平台支持的其他路径。若同一张量很快又要使用，来回搬运的时间可能拖慢计算；若张量暂时不用且显存压力很大，offload 就能让更多工作留在 GPU 上继续推进。
+
+#### Activation checkpointing：少保存中间张量，需要时重新算
+
+**重计算（recomputation）**的典型做法是 activation checkpointing（激活检查点）。前向计算时只保留选定位置的检查点，释放部分中间激活；反向传播需要这些值时，重新执行对应的一段前向计算把它们生成出来。PyTorch 将 activation checkpointing 描述为用额外计算换取更低的激活值内存占用。[PyTorch activation checkpointing 文档](https://docs.pytorch.org/docs/main/utils/checkpoint.html)
+
+例如，模型把若干层划成一个计算区段。前向时保留区段入口的激活和出口结果，不保留区段内部的一部分中间结果；反向传播走回该区段时，用入口激活重新运行这些层，再继续计算梯度。这样少占显存，但会重复执行部分计算。
+
+#### 两种办法的取舍
+
+| 做法 | 张量发生了什么 | 释放 GPU 显存的方式 | 主要额外成本 |
+| --- | --- | --- | --- |
+| CPU offload（换出） | 保留张量数值，移到 CPU 主存，需要时再传回 GPU | 将数据暂时存放到主机内存 | CPU-GPU 传输和同步 |
+| 重计算 | 丢弃部分中间激活，需要时重新运行前向计算生成 | 不长期保存部分中间数据 | 额外计算时间 |
+
+两种办法都在缓解显存瓶颈，但机制不同：offload 是“搬到别处保存”，重计算是“需要时重新生成”。系统可以按张量或模型区段选择策略，也可以组合使用。判断时要一起看显存峰值、CPU-GPU 传输时间、额外计算量和整体吞吐；它们都不是无成本的通用加速开关。
+
 ## 4. 合并访存：让一个 Warp 少跑几趟仓库
 
 当一个 Warp 的多个线程访问 Global Memory 时，硬件会把这些请求组合成尽可能少的内存事务，这称为 Coalescing（合并访存）。
@@ -265,3 +308,5 @@ Occupancy 受多种资源共同限制：
 - [CUDA C++ Best Practices Guide：合并访存与 Occupancy](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/)
 - [Nsight Compute Profiling Guide：Roofline 与 Arithmetic Intensity](https://docs.nvidia.com/nsight-compute/ProfilingGuide/)
 - [NASA HECC：A100/H100 GPU 架构与存储延迟参考](https://www.nas.nasa.gov/hecc/support/kb/basics-on-nvidia-gpu-hardware-architecture_704.html)
+- PyTorch, [Tensor 数据结构](https://docs.pytorch.org/docs/stable/tensors.html)
+- PyTorch, [Activation checkpointing 与 CPU offload](https://docs.pytorch.org/docs/stable/checkpoint.html)
