@@ -20,6 +20,7 @@
 - [并发基础：第 2 章 串行与并行执行](ai-infra/concurrency/chapter-02.md)：任务依赖、并行条件、Amdahl 与 Gustafson 定律。
 - [计算机如何工作：第 3 章](ai-infra/concurrency/chapter-03.md)：处理器、缓存、CPU 执行周期、运行时系统、并行硬件、SMP、Flynn 分类和 CPU/GPU 分工。
 - [并发程序的基本构件：第 4 章](ai-infra/concurrency/chapter-04.md)：并发设计步骤、进程与线程的状态和实现，以及 Python 服务中的调度选择。
+- [进程间通信：第 5 章](ai-infra/concurrency/chapter-05.md)：共享内存、消息传递、线程池与任务结果汇总。
 - [CUDA C/C++：编译、Kernel 启动与内存管理](ai-infra/gpu/cuda-c-cpp-memory-kernel.md)：C/C++ 基础、Kernel 启动与 CPU/GPU 数据流。
 - [GPU 执行模型、内存层级与性能分析](ai-infra/gpu/cuda-execution-memory-performance.md)：从 CUDA 执行层级、访存到 Occupancy 理解 GPU 性能。
 
