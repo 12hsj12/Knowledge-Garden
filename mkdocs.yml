@@ -58,6 +58,7 @@ nav:
           - 第 6 章：多任务: ai-infra/concurrency/chapter-06.md
       - GPU 基础:
           - CUDA C/C++：编译、Kernel 启动与内存管理: ai-infra/gpu/cuda-c-cpp-memory-kernel.md
+          - CUDA 线程协作与计算模式: ai-infra/gpu/cuda-thread-cooperation-and-patterns.md
           - GPU 执行模型、内存与性能: ai-infra/gpu/cuda-execution-memory-performance.md
   - 学习路线规划:
       - 从计算机基础到 Agent 实习: learning-roadmap/index.md
