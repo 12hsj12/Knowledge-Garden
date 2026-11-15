@@ -1,6 +1,6 @@
 # CUDA C/C++ 入门：编译、Kernel 启动与内存管理
 
-这页把 C/C++ 基础语法与 CUDA 编程模型连接起来，重点看一段向量加法程序怎样从 CPU Host 发起工作、把数据交给 GPU Device、并行执行 Kernel，再把结果交回 CPU。
+这页把 C/C++ 基础语法与 CUDA 编程模型连接起来，重点看一段向量加法程序怎样从 CPU Host 发起工作、把数据交给 GPU Device、并行执行 Kernel，再把结果交回 CPU。进一步练习 Block/Warp 协作、归约和分块矩阵乘法，可读 [CUDA 线程协作与计算模式](cuda-thread-cooperation-and-patterns.md)。
 
 学习与动手主线来自《大规模并行处理器程序设计（原书第 4 版）》第 2 章的向量加法与设备全局内存/数据传输，以及《CUDA C 编程权威指南》第 2 章有关内存管理和 Kernel 启动的内容。向量加法已在 RTX 4090 上通过托管内存和显式显存管理两种方式运行。
 
