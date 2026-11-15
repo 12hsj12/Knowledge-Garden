@@ -29,9 +29,9 @@ __global__ void stageData(const float* input, float* output, int n) {
 
     __syncthreads();
 
-    // 屏障之后，Block 内线程可以读取已装入的 tile
-    if (index < n) {
-        output[index] = tile[tid];
+    // 线程 0 读取由不同线程写入的两个位置
+    if (tid == 0) {
+        output[blockIdx.x] = tile[0] + tile[BLOCK_SIZE - 1];
     }
 }
 ~~~
