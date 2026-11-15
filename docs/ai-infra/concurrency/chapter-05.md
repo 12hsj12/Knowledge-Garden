@@ -225,6 +225,8 @@ ThreadPoolExecutor 的接口和执行方式见 [Python concurrent.futures 文档
 5. 多个 FastAPI 进程怎样共享会话或缓存状态？为什么普通全局变量做不到？
 6. 密码搜索例子中的工作项怎样划分？主线程怎样知道任务何时完成并收集结果？
 
+下一章从运行时视角继续展开：任务受 CPU 还是 I/O 限制？操作系统怎样安排它们轮流推进？参见[第 6 章：多任务](chapter-06.md)。
+
 ## 参考资料
 
 - Kirill Bobrov, [Grokking Concurrency, Chapter 5: Interprocess communication](https://livebook.manning.com/book/grokking-concurrency/chapter-5)
