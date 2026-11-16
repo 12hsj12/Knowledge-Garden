@@ -56,6 +56,7 @@ nav:
           - 第 4 章：并发程序的基本构件: ai-infra/concurrency/chapter-04.md
           - 第 5 章：进程间通信: ai-infra/concurrency/chapter-05.md
           - 第 6 章：多任务: ai-infra/concurrency/chapter-06.md
+          - 第 7 章：分解问题与并发模式: ai-infra/concurrency/chapter-07.md
       - GPU 基础:
           - CUDA C/C++：编译、Kernel 启动与内存管理: ai-infra/gpu/cuda-c-cpp-memory-kernel.md
           - CUDA 线程协作与计算模式: ai-infra/gpu/cuda-thread-cooperation-and-patterns.md
