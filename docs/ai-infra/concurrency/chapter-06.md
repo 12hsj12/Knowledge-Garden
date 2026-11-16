@@ -230,6 +230,8 @@ asyncio.run(main())
 7. 什么情况下线程池、进程池或 asyncio 更适合服务中的不同工作？
 8. 如果 API 延迟上升而 CPU 使用率很低，你会进一步查看哪些等待阶段？
 
+下一章从任务运行方式进一步转向问题设计：怎样找出独立工作、选择分解模式并平衡任务大小？参见[第 7 章：分解问题与并发模式](chapter-07.md)。
+
 ## 参考资料
 
 - Kirill Bobrov, [Grokking Concurrency, Chapter 6: Multitasking](https://livebook.manning.com/book/grokking-concurrency/chapter-6)
