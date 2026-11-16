@@ -21,6 +21,7 @@ AI Infra 关注为 AI 工作负载提供和管理运行能力：计算资源如�
 - [并发程序的基本构件：第 4 章](concurrency/chapter-04.md)：并发程序设计步骤、进程和线程的内部结构与状态、多进程通信、线程调度，以及 Python 服务中的进程、线程和 asyncio。
 - [进程间通信：第 5 章](concurrency/chapter-05.md)：共享内存、消息传递、管道与队列、线程池，以及并发任务的拆分、执行和结果汇总。
 - [多任务：第 6 章](concurrency/chapter-06.md)：CPU 与 I/O 瓶颈、单核时间共享、抢占式调度、上下文切换、任务隔离与 Python 执行模型。
+- [分解问题与并发模式：第 7 章](concurrency/chapter-07.md)：依赖分析、任务/数据分解、Pipeline、Map、Fork/Join、MapReduce 与粒度取舍。
 
 ### GPU 基础
 
