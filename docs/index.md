@@ -22,6 +22,7 @@
 - [并发程序的基本构件：第 4 章](ai-infra/concurrency/chapter-04.md)：并发设计步骤、进程与线程的状态和实现，以及 Python 服务中的调度选择。
 - [进程间通信：第 5 章](ai-infra/concurrency/chapter-05.md)：共享内存、消息传递、线程池与任务结果汇总。
 - [多任务：第 6 章](ai-infra/concurrency/chapter-06.md)：CPU/I/O 瓶颈、操作系统调度与上下文切换。
+- [分解问题与并发模式：第 7 章](ai-infra/concurrency/chapter-07.md)：从任务依赖和数据分区到 Pipeline、Map、Fork/Join 与 MapReduce。
 - [CUDA C/C++：编译、Kernel 启动与内存管理](ai-infra/gpu/cuda-c-cpp-memory-kernel.md)：C/C++ 基础、Kernel 启动与 CPU/GPU 数据流。
 - [CUDA 线程协作与计算模式](ai-infra/gpu/cuda-thread-cooperation-and-patterns.md)：Shared Memory、Shuffle Reduction 与 Tiled 矩阵乘法。
 - [GPU 执行模型、内存层级与性能分析](ai-infra/gpu/cuda-execution-memory-performance.md)：从 CUDA 执行层级、访存到 Occupancy 理解 GPU 性能。
