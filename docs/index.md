@@ -23,6 +23,8 @@
 - [进程间通信：第 5 章](ai-infra/concurrency/chapter-05.md)：共享内存、消息传递、线程池与任务结果汇总。
 - [多任务：第 6 章](ai-infra/concurrency/chapter-06.md)：CPU/I/O 瓶颈、操作系统调度与上下文切换。
 - [分解问题与并发模式：第 7 章](ai-infra/concurrency/chapter-07.md)：从任务依赖和数据分区到 Pipeline、Map、Fork/Join 与 MapReduce。
+- [竞态条件与同步：第 8 章](ai-infra/concurrency/chapter-08.md)：共享状态、互斥锁、信号量、条件变量与原子操作。
+- [死锁、活锁与饥饿：第 9 章](ai-infra/concurrency/chapter-09.md)：死锁成因与预防、同步设计、生产者—消费者和读者—写者。
 - [CUDA C/C++：编译、Kernel 启动与内存管理](ai-infra/gpu/cuda-c-cpp-memory-kernel.md)：C/C++ 基础、Kernel 启动与 CPU/GPU 数据流。
 - [CUDA 线程协作与计算模式](ai-infra/gpu/cuda-thread-cooperation-and-patterns.md)：Shared Memory、Shuffle Reduction 与 Tiled 矩阵乘法。
 - [GPU 执行模型、内存层级与性能分析](ai-infra/gpu/cuda-execution-memory-performance.md)：从 CUDA 执行层级、访存到 Occupancy 理解 GPU 性能。
