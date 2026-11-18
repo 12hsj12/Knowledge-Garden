@@ -292,3 +292,8 @@ MapReduce 与 Fork/Join 都会拆分工作并汇总结果；MapReduce 更明确�
 - Manning, [MapReduce in Grokking Concurrency](https://livebook.manning.com/learn/concepts/mapreduce--pattern/grokking-concurrency)
 - Manning, [Granularity in Grokking Concurrency](https://livebook.manning.com/learn/concepts/granularity--domain-concept/grokking-concurrency)
 - Python 3.14 documentation, [concurrent.futures — Launching parallel tasks](https://docs.python.org/3.14/library/concurrent.futures.html)
+
+
+---
+
+**继续阅读：** [第 8 章：竞态条件与同步](chapter-08.md)。
