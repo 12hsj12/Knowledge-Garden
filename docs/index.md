@@ -25,6 +25,10 @@
 - [分解问题与并发模式：第 7 章](ai-infra/concurrency/chapter-07.md)：从任务依赖和数据分区到 Pipeline、Map、Fork/Join 与 MapReduce。
 - [竞态条件与同步：第 8 章](ai-infra/concurrency/chapter-08.md)：共享状态、互斥锁、信号量、条件变量与原子操作。
 - [死锁、活锁与饥饿：第 9 章](ai-infra/concurrency/chapter-09.md)：死锁成因与预防、同步设计、生产者—消费者和读者—写者。
+- [非阻塞 I/O：第 10 章](ai-infra/concurrency/chapter-10.md)：Socket、C10K 问题和阻塞/非阻塞 I/O。
+- [事件驱动并发：第 11 章](ai-infra/concurrency/chapter-11.md)：I/O 多路复用、事件循环、Reactor 和 I/O 模型。
+- [异步通信：第 12 章](ai-infra/concurrency/chapter-12.md)：协程、Future、Task 与 asyncio。
+- [编写并发应用：第 13 章](ai-infra/concurrency/chapter-13.md)：Foster 方法、并发设计案例和全书主线。
 - [CUDA C/C++：编译、Kernel 启动与内存管理](ai-infra/gpu/cuda-c-cpp-memory-kernel.md)：C/C++ 基础、Kernel 启动与 CPU/GPU 数据流。
 - [CUDA 线程协作与计算模式](ai-infra/gpu/cuda-thread-cooperation-and-patterns.md)：Shared Memory、Shuffle Reduction 与 Tiled 矩阵乘法。
 - [GPU 执行模型、内存层级与性能分析](ai-infra/gpu/cuda-execution-memory-performance.md)：从 CUDA 执行层级、访存到 Occupancy 理解 GPU 性能。
