@@ -188,4 +188,4 @@ def consumer():
 - Kirill Bobrov, [Grokking Concurrency：第 9 章目录与学习目标](https://livebook.manning.com/learn/grokking-concurrency)
 - Python 3.14 文档：[queue — A synchronized queue class](https://docs.python.org/3.14/library/queue.html)
 - Python 3.14 文档：[threading — Thread-based parallelism](https://docs.python.org/3.14/library/threading.html)
-- [上一章：竞态条件与同步](chapter-08.md) · [第 7 章：分解问题与并发模式](chapter-07.md)
+- [上一章：竞态条件与同步](chapter-08.md) · [下一章：非阻塞 I/O](chapter-10.md) · [第 7 章：分解问题与并发模式](chapter-07.md)
