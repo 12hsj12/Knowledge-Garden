@@ -24,6 +24,10 @@ AI Infra 关注为 AI 工作负载提供和管理运行能力：计算资源如�
 - [分解问题与并发模式：第 7 章](concurrency/chapter-07.md)：依赖分析、任务/数据分解、Pipeline、Map、Fork/Join、MapReduce 与粒度取舍。
 - [竞态条件与同步：第 8 章](concurrency/chapter-08.md)：共享状态、丢失更新、临界区、Lock、Semaphore、Condition 与原子操作。
 - [死锁、活锁与饥饿：第 9 章](concurrency/chapter-09.md)：哲学家就餐、死锁预防、进度公平性、生产者—消费者与读者—写者。
+- [非阻塞 I/O：第 10 章](concurrency/chapter-10.md)：客户端—服务器、Socket、C10K 问题、阻塞与非阻塞 I/O。
+- [事件驱动并发：第 11 章](concurrency/chapter-11.md)：I/O 多路复用、事件循环、回调、Reactor 与 I/O 模型。
+- [异步通信：第 12 章](concurrency/chapter-12.md)：协作式多任务、协程、Future、Task 与 asyncio 执行方式。
+- [编写并发应用：第 13 章](concurrency/chapter-13.md)：Foster 方法、矩阵乘法、分布式词频统计与全书主线。
 
 ### GPU 基础
 
