@@ -59,6 +59,10 @@ nav:
           - 第 7 章：分解问题与并发模式: ai-infra/concurrency/chapter-07.md
           - 第 8 章：竞态条件与同步: ai-infra/concurrency/chapter-08.md
           - 第 9 章：死锁、活锁与饥饿: ai-infra/concurrency/chapter-09.md
+          - 第 10 章：非阻塞 I/O: ai-infra/concurrency/chapter-10.md
+          - 第 11 章：事件驱动并发: ai-infra/concurrency/chapter-11.md
+          - 第 12 章：异步通信: ai-infra/concurrency/chapter-12.md
+          - 第 13 章：编写并发应用: ai-infra/concurrency/chapter-13.md
       - GPU 基础:
           - CUDA C/C++：编译、Kernel 启动与内存管理: ai-infra/gpu/cuda-c-cpp-memory-kernel.md
           - CUDA 线程协作与计算模式: ai-infra/gpu/cuda-thread-cooperation-and-patterns.md
